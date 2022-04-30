@@ -1,6 +1,6 @@
 {
-  "name": "@koishijs/plugin-eval",
-  "version": "4.0.4",
+  "name": "koishi-plugin-eval",
+  "version": "4.1.0",
   "description": "Execute JavaScript and create addons in Koishi",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",

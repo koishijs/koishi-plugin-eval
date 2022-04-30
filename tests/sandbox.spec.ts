@@ -1,4 +1,4 @@
-import { Sandbox } from '@koishijs/plugin-eval/src/worker/sandbox'
+import { Sandbox } from '../src/worker/sandbox'
 import { inspect } from 'util'
 import { expect, use } from 'chai'
 import shape from 'chai-shape'

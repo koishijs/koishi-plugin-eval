@@ -2,7 +2,7 @@ import { App } from 'koishi'
 import { resolve } from 'path'
 import { promises as fs } from 'fs'
 import mock from '@koishijs/plugin-mock'
-import * as eval from '@koishijs/plugin-eval'
+import * as eval from '../src'
 import * as teach from 'koishi-plugin-dialogue'
 
 const app = new App()
