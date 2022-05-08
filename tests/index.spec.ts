@@ -3,7 +3,7 @@ import { resolve } from 'path'
 import { promises as fs } from 'fs'
 import mock from '@koishijs/plugin-mock'
 import * as eval from '../src'
-import * as teach from 'koishi-plugin-dialogue'
+import * as dialogue from 'koishi-plugin-dialogue'
 
 const app = new App()
 
@@ -17,12 +17,8 @@ app.plugin(eval, {
   },
 })
 
-app.plugin(teach, {
+app.plugin(dialogue, {
   historyTimeout: 0,
-  useContext: false,
-  useTime: false,
-  useWriter: false,
-  successorTimeout: 0,
 })
 
 const client = app.mock.client('123', '456')
