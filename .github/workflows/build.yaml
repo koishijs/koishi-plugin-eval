@@ -26,5 +26,5 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Test
-          repo: koishijs/koishi
+          repo: koishijs/koishijs.github.io
           token: ${{ secrets.WORKFLOW_TOKEN }}

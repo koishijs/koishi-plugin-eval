@@ -35,7 +35,7 @@ before(async () => {
 
 after(() => app.stop())
 
-describe('Eval Plugin', () => {
+describe('koishi-plugin-eval', () => {
   it('basic support', async () => {
     await client.shouldReply('> 1 + 1', '2')
     await client.shouldNotReply('>> 1 + 2')
@@ -102,7 +102,8 @@ describe('Eval Plugin', () => {
 
 describe('Eval Loaders', () => {
   function createApp(scriptLoader: string) {
-    const app = new App().plugin(mock)
+    const app = new App()
+    app.plugin(mock)
     app.command('echo <text:text>').action((_, text) => text)
     app.plugin(eval, { scriptLoader })
 
