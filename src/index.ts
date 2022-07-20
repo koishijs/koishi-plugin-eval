@@ -9,10 +9,8 @@ import { WorkerResponse } from './worker'
 export * from './main'
 
 declare module 'koishi' {
-  namespace Context {
-    interface Services {
-      worker: EvalWorker
-    }
+  interface Context {
+    worker: EvalWorker
   }
 
   namespace Command {
@@ -25,7 +23,7 @@ declare module 'koishi' {
     _isEval: boolean
   }
 
-  interface EventMap {
+  interface Events {
     'eval/before-send'(content: string, session: Session): Awaitable<string>
     'eval/before-start'(): Awaitable<void>
     'eval/start'(response: WorkerResponse): void

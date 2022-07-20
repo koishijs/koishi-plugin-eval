@@ -37,7 +37,7 @@
     }
   },
   "peerDependencies": {
-    "koishi": "^4.7.2"
+    "koishi": "^4.8.1"
   },
   "optionalDependencies": {
     "@babel/core": "^7.18.2",
