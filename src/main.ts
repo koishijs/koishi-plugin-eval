@@ -21,11 +21,11 @@ export interface EvalConfig extends MainConfig, WorkerData {}
 
 export interface Config extends MainConfig, WorkerConfig {}
 
-export const Config = Schema.object({
+export const Config: Schema<Config> = Schema.object({
   prefix: Schema.string().description('快捷调用的前缀字符。').default('>'),
-  serializer: Schema.union(['v8', 'yaml']).description('要使用的序列化方法。此配置将会影响 storage 能够支持的类型。').default('v8'),
-  userFields: Schema.array(String).description('能够在 evaluate 指令中被访问的用户字段列表。').default(['id', 'authority']),
-  channelFields: Schema.array(String).description('能够在 evaluate 指令中被访问的频道字段列表。').default(['id']),
+  serializer: Schema.union(['v8', 'yaml'] as const).description('要使用的序列化方法。此配置将会影响 storage 能够支持的类型。').default('v8'),
+  userFields: Schema.array(String).description('能够在 evaluate 指令中被访问的用户字段列表。').default(['id', 'authority']) as Schema<Trap.Access<User.Field>>,
+  channelFields: Schema.array(String).description('能够在 evaluate 指令中被访问的频道字段列表。').default(['id']) as Schema<Trap.Access<Channel.Field>>,
   resourceLimits: Schema.object({
     maxYoungGenerationSizeMb: Schema.number(),
     maxOldGenerationSizeMb: Schema.number(),
@@ -123,12 +123,12 @@ export namespace Trap {
       const user = Trap.user.get(argv.session.user, userAccess.readable)
       const channel = Trap.channel.get(argv.session.channel, channelAccess.readable)
       const payload = { id, user, channel, userWritable, channelWritable }
-      const inactive = !app._sessions[id]
-      app._sessions[id] = argv.session
+      const inactive = !app.$internal._sessions[id]
+      app.$internal._sessions[id] = argv.session
       try {
         return await action({ ...argv, payload }, ...args)
       } finally {
-        if (inactive) delete app._sessions[id]
+        if (inactive) delete app.$internal._sessions[id]
       }
     }, true)
   }
@@ -138,7 +138,7 @@ export class MainHandle {
   constructor(public app: App) {}
 
   private getSession(uuid: string) {
-    const session = this.app._sessions[uuid]
+    const session = this.app.$internal._sessions[uuid]
     if (!session) throw new Error(`session ${uuid} not found`)
     return session
   }

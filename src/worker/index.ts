@@ -89,7 +89,7 @@ export interface Session {
   storage: SerializableObject
   user: User.Observed<any>
   channel: Channel.Observed<any>
-  send(...param: any[]): Promise<void>
+  send(...param: any[]): Promise<string[]>
   exec(message: string): Promise<string>
 }
 
