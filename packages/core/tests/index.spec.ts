@@ -25,13 +25,13 @@ app.plugin(dialogue, {
 const client = app.mock.client('123', '456')
 
 before(async () => {
-  await app.mock.initUser('123', 3)
-  await app.mock.initChannel('456')
-  await fs.rmdir(resolve(__dirname, 'fixtures/.koishi'), { recursive: true })
-  return new Promise<void>((resolve) => {
+  await fs.rm(resolve(__dirname, 'fixtures/.koishi'), { recursive: true, force: true })
+  await new Promise<void>((resolve) => {
     app.on('eval/start', () => resolve())
     app.start()
   })
+  await app.mock.initUser('123', 3)
+  await app.mock.initChannel('456')
 })
 
 after(() => app.stop())
