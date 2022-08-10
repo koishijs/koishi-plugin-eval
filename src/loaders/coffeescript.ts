@@ -33,7 +33,7 @@ export function extractScript(expr: string) {
 }
 
 export async function transformScript(expr: string) {
-  // wrapped by `do` so that we can use `await` in the exporession
+  // wrapped by `do` so that we can use `await` in the expression
   expr = `do -> (${expr})`
   const raw = compile(expr, { bare: true })
   const { code } = await transformAsync(raw, options)

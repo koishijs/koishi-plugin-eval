@@ -119,7 +119,7 @@ export const createSession = ({ id, user, userWritable, channel, channelWritable
   async send(...param: [string, ...any[]]) {
     const content = formatResult(...param)
     if (!content) return
-    return await main.send(id, content)
+    await main.send(id, content)
   },
 
   async exec(message: string) {

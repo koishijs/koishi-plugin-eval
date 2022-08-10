@@ -2,6 +2,7 @@ import { App, Channel, Command, Context, Argv as IArgv, Logger, Observed, pick, 
 import { ResourceLimits, Worker } from 'worker_threads'
 import { Loader, SessionData, WorkerConfig, WorkerData, WorkerHandle } from './worker'
 import { expose, Remote, wrap } from './transfer'
+import { builtin } from './loaders'
 import { resolve } from 'path'
 
 const logger = new Logger('eval')
@@ -32,7 +33,7 @@ export const Config = Schema.object({
     codeRangeSizeMb: Schema.number(),
     stackSizeMb: Schema.number(),
   }).description('资源限制'),
-})
+}) as Schema<Config>
 
 export class Trap<O extends {}> {
   private traps: Record<string, Trap.Declaraion<O, any, any>> = {}
@@ -123,12 +124,12 @@ export namespace Trap {
       const user = Trap.user.get(argv.session.user, userAccess.readable)
       const channel = Trap.channel.get(argv.session.channel, channelAccess.readable)
       const payload = { id, user, channel, userWritable, channelWritable }
-      const inactive = !app._sessions[id]
-      app._sessions[id] = argv.session
+      const inactive = !app.$internal._sessions[id]
+      app.$internal._sessions[id] = argv.session
       try {
         return await action({ ...argv, payload }, ...args)
       } finally {
-        if (inactive) delete app._sessions[id]
+        if (inactive) delete app.$internal._sessions[id]
       }
     }, true)
   }
@@ -138,7 +139,7 @@ export class MainHandle {
   constructor(public app: App) {}
 
   private getSession(uuid: string) {
-    const session = this.app._sessions[uuid]
+    const session = this.app.$internal._sessions[uuid]
     if (!session) throw new Error(`session ${uuid} not found`)
     return session
   }
@@ -176,8 +177,6 @@ function createRequire(filename: string) {
 
 enum State { closing, close, opening, open }
 
-declare const BUILTIN_LOADERS: string[]
-
 export class EvalWorker {
   private prevent = false
   private worker: Worker
@@ -204,7 +203,7 @@ export class EvalWorker {
 
   prepare = async ({ scriptLoader, loaderConfig }: EvalConfig) => {
     // resolve loader filepath
-    if (BUILTIN_LOADERS.includes(scriptLoader)) {
+    if (builtin.includes(scriptLoader)) {
       scriptLoader = resolve(__dirname, 'loaders', scriptLoader)
     } else {
       scriptLoader = resolve(this.ctx.app.baseDir, scriptLoader)

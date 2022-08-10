@@ -2,6 +2,7 @@ import { config, context, internal } from '.'
 import { dirname, extname, posix, resolve } from 'path'
 import { promises as fs } from 'fs'
 import { Awaitable, Dict, Logger } from '@koishijs/utils'
+import { builtin } from '../loaders'
 import * as yaml from 'js-yaml'
 import * as v8 from 'v8'
 
@@ -175,13 +176,12 @@ function exposeGlobal(name: string, namespace: {}) {
   internal.setGlobal(name, outer)
 }
 
-declare const BUILTIN_LOADERS: string[]
 const fileAssoc: Dict<Loader> = {}
 const loaderSet = new Set<Loader>()
 
 function resolveLoader(extension: string) {
   const filename = config.moduleLoaders[extension]
-  if (BUILTIN_LOADERS.includes(filename)) {
+  if (builtin.includes(filename)) {
     return require('../loaders/' + filename)
   } else if (filename) {
     return require(resolve(config.baseDir, filename))
