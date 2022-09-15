@@ -14,8 +14,7 @@ declare module 'koishi/addons' {
 }
 
 declare module 'koishi/utils' {
-  import { Time, Random } from '@koishijs/utils'
-  import * as segment from '@satorijs/element'
+  import { Time, Random, segment } from 'koishi'
 
   export { Time, Random, segment }
 }
