@@ -3,7 +3,7 @@ import json5 from 'json5'
 import { promises as fs } from 'fs'
 import { LoaderConfig } from '../worker'
 import { resolve } from 'path'
-import { Logger } from '@koishijs/utils'
+import Logger from 'reggol'
 
 export { extractScript } from './default'
 
