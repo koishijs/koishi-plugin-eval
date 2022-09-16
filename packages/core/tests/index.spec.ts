@@ -3,16 +3,19 @@ import { resolve } from 'path'
 import { promises as fs } from 'fs'
 import mock from '@koishijs/plugin-mock'
 import memory from '@koishijs/plugin-database-memory'
+import * as help from '@koishijs/plugin-help'
 import * as eval from '../src'
 import * as dialogue from 'koishi-plugin-dialogue'
 
 const app = new App()
+const root = resolve(__dirname, 'fixtures')
 
 app.plugin(memory)
+app.plugin(help)
 app.plugin(mock)
 
 app.plugin(eval, {
-  root: resolve(__dirname, 'fixtures'),
+  root,
   setupFiles: {
     'test-worker': resolve(__dirname, 'worker.ts'),
   },
@@ -45,7 +48,7 @@ describe('koishi-plugin-eval', () => {
   })
 
   it('validation', async () => {
-    await client.shouldReply('>', '请输入要执行的脚本。')
+    await client.shouldReply('eval', '请输入要执行的脚本。')
   })
 
   it('error', async () => {
@@ -106,7 +109,7 @@ describe('Eval Loaders', () => {
     const app = new App()
     app.plugin(mock)
     app.command('echo <text:text>').action((_, text) => text)
-    app.plugin(eval, { scriptLoader })
+    app.plugin(eval, { root, scriptLoader })
 
     return new Promise<App>((resolve) => {
       app.on('eval/start', () => resolve(app))

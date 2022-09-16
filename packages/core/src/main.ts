@@ -127,6 +127,8 @@ export namespace Trap {
       const inactive = !app.$internal._sessions[id]
       app.$internal._sessions[id] = argv.session
       try {
+        const prev = await argv.next()
+        if (prev) return prev
         return await action({ ...argv, payload }, ...args)
       } finally {
         if (inactive) delete app.$internal._sessions[id]
