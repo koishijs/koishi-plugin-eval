@@ -86,7 +86,7 @@ describe('Eval Sandbox (Frozen)', () => {
     expect(inspect(vm.run('new Map([[1, 2]])'))).to.equal(inspect(new Map([[1, 2]])))
     expect(inspect(vm.run('new WeakSet([[1]])'))).to.equal(inspect(new WeakSet([[1]])))
     expect(inspect(vm.run('new WeakMap([[[1], 2]])'))).to.equal(inspect(new WeakMap([[[1], 2]])))
-    expect(inspect(vm.run('new RegExp()'))).to.equal(inspect(new RegExp(undefined)))
+    expect(inspect(vm.run('new RegExp()'))).to.equal(inspect(new RegExp(undefined as any)))
     expect(inspect(vm.run('Proxy'))).to.equal(inspect(Proxy))
     expect(inspect(vm.run('test.object'))).to.equal(inspect({ foo: 0 }))
   })

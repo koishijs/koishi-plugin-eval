@@ -28,7 +28,7 @@ export class Sandbox {
     const data = readFileSync(filename, 'utf8')
     const script = new Script(data, { filename })
 
-    const module: { exports?: typeof Internal } = {}
+    const module: { exports?: typeof Internal } = Object.create(null)
     script.runInContext(this.context, { displayErrors: false })(Host, module, this.context)
     this.internal = module.exports
   }

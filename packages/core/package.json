@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-eval",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Execute JavaScript and create addons in Koishi",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -38,6 +38,10 @@
     "code"
   ],
   "koishi": {
+    "description": {
+      "zh": "执行 JavaScript",
+      "en": "Execute JavaScript"
+    },
     "service": {
       "implements": [
         "worker"
