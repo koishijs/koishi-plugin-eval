@@ -1,7 +1,3 @@
----
-sidebarDepth: 2
----
-
 # 基本用法
 
 ::: warning 注意

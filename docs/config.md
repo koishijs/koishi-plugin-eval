@@ -1,7 +1,3 @@
----
-sidebarDepth: 2
----
-
 # 配置项
 
 请注意标有 <Badge text="addons" vertical="baseline"/> 的配置项需要配合 addons 使用。但你可以将相应的参数传给任何一个插件，效果是等价的。

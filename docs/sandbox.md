@@ -1,7 +1,3 @@
----
-sidebarDepth: 2
----
-
 # 沙箱 API
 
 evaluate 指令会创建一个沙箱环境。这个沙箱环境支持 ES2020 的全部特性，外加 [Buffer](https://nodejs.org/dist/latest-v14.x/docs/api/buffer.html)。除此以外，还支持下面的属性和方法：
