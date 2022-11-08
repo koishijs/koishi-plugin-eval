@@ -1,5 +1,6 @@
 import { Argv, Awaitable, Command, Context, defineProperty, escapeRegExp, Logger, noop, segment } from 'koishi'
 import { Config, EvalConfig, EvalWorker, Trap } from './main'
+import {} from '@koishijs/plugin-help'
 import { resolve } from 'path'
 import { load } from 'js-yaml'
 import { promises as fs } from 'fs'
@@ -166,7 +167,7 @@ export function apply(ctx: Context, config: Config = {}) {
 
 function addon(ctx: Context, config: EvalConfig) {
   const logger = ctx.logger('eval:addons')
-  const root = config.root = resolve(ctx.app.baseDir, config.root)
+  const root = config.root = resolve(ctx.baseDir, config.root)
   config.dataKeys.push('addonNames', 'root')
 
   const git = Git(root)

@@ -1,4 +1,4 @@
-import { App, Channel, Command, Context, Argv as IArgv, Logger, Observed, pick, Schema, union, User } from 'koishi'
+import { Channel, Command, Context, Argv as IArgv, Logger, Observed, pick, Schema, union, User } from 'koishi'
 import { ResourceLimits, Worker } from 'worker_threads'
 import { Loader, SessionData, WorkerConfig, WorkerData, WorkerHandle } from './worker'
 import { expose, Remote, wrap } from './transfer'
@@ -138,10 +138,10 @@ export namespace Trap {
 }
 
 export class MainHandle {
-  constructor(public app: App) {}
+  constructor(public ctx: Context) {}
 
   private getSession(uuid: string) {
-    const session = this.app.$internal._sessions[uuid]
+    const session = this.ctx.$internal._sessions[uuid]
     if (!session) throw new Error(`session ${uuid} not found`)
     return session
   }
@@ -158,7 +158,7 @@ export class MainHandle {
 
   async send(uuid: string, content: string) {
     const session = this.getSession(uuid)
-    content = await this.app.waterfall('eval/before-send', content, session)
+    content = await this.ctx.waterfall('eval/before-send', content, session)
     if (content) return await session.sendQueued(content)
   }
 
@@ -192,7 +192,7 @@ export class EvalWorker {
   static readonly State = State
 
   constructor(public ctx: Context, public config: EvalConfig) {
-    this.local = new MainHandle(ctx.app)
+    this.local = new MainHandle(ctx)
 
     ctx.before('eval/start', () => this.prepare(config))
 
@@ -208,7 +208,7 @@ export class EvalWorker {
     if (builtin.includes(scriptLoader)) {
       scriptLoader = resolve(__dirname, 'loaders', scriptLoader)
     } else {
-      scriptLoader = resolve(this.ctx.app.baseDir, scriptLoader)
+      scriptLoader = resolve(this.ctx.baseDir, scriptLoader)
     }
     this.loader = require(scriptLoader)
     return this.loader.prepare?.(loaderConfig)
@@ -235,7 +235,7 @@ export class EvalWorker {
       workerData: {
         logLevels: Logger.levels,
         logTime: Logger.targets[0].showTime,
-        baseDir: this.ctx.app.baseDir,
+        baseDir: this.ctx.baseDir,
         ...pick(this.config, this.config.dataKeys),
       },
       resourceLimits: this.config.resourceLimits,
