@@ -1,12 +1,17 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from '@koishijs/vitepress'
 
 export default defineConfig({
   lang: 'zh-CN',
   title: 'koishi-plugin-eval',
   description: '在 Koishi 中执行 JavaScript',
 
+  head: [
+    ['link', { rel: 'icon', href: 'https://koishi.chat/logo.png' }],
+    ['link', { rel: 'manifest', href: 'https://koishi.chat/manifest.json' }],
+    ['meta', { name: 'theme-color', content: '#5546a3' }],
+  ],
+
   themeConfig: {
-    outline: [2, 3],
     sidebar: [{
       text: '指南',
       items: [
@@ -20,6 +25,12 @@ export default defineConfig({
         { text: '主线程 API', link: '/main.md' },
         { text: '主线程 API', link: '/worker.md' },
         { text: '沙箱 API', link: '/sandbox.md' },
+      ],
+    }, {
+      text: '更多',
+      items: [
+        { text: 'Koishi 官网', link: 'https://koishi.chat' },
+        { text: '支持作者', link: 'https://afdian.net/a/shigma' },
       ],
     }],
   },

@@ -46,9 +46,9 @@ Trap.user.define('foo', {
 ctx.command('foo', { noEval: true })
 ```
 
-<panel-view title="聊天记录">
-<chat-message nickname="Alice" color="#cc0066">> exec('foo')</chat-message>
-<chat-message nickname="Koishi" avatar="/koishi.png">不能在 evaluate 指令中调用 foo 指令。</chat-message>
-</panel-view>
+<chat-panel>
+<chat-message nickname="Alice">> exec('foo')</chat-message>
+<chat-message nickname="Koishi">不能在 evaluate 指令中调用 foo 指令。</chat-message>
+</chat-panel>
 
 默认情况下，evaluate 指令本身也是禁止在沙箱中调用的。
