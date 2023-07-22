@@ -67,7 +67,8 @@ Context.service('worker')
 export const name = 'eval'
 
 export function apply(ctx: Context, config: Config = {}) {
-  const { prefix, authority } = config = { ...defaultConfig, ...config }
+  const { authority } = config = { ...defaultConfig, ...config }
+  const prefix = segment.escape(config.prefix)
 
   ctx.worker = new EvalWorker(ctx, config)
 
