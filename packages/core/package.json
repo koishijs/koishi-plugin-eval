@@ -69,6 +69,7 @@
     "@koishijs/plugin-mock": "^2.2.0",
     "@types/babel__core": "^7.1.19",
     "@types/js-yaml": "^4.0.5",
+    "koishi": "^4.10.0",
     "koishi-plugin-dialogue": "^4.0.2"
   }
 }

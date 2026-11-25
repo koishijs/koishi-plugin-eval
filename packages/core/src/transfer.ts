@@ -1,6 +1,5 @@
 import { MessagePort, Worker } from 'worker_threads'
-import { noop, Random } from '@koishijs/utils'
-import Logger from 'reggol'
+import { Logger, noop, Random } from 'koishi'
 
 type Endpoint = MessagePort | Worker
 

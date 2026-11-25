@@ -232,7 +232,6 @@ async function start() {
   }
 
   response.commands = Object.keys(commandMap)
-  mapDirectory('koishi/utils/', require.resolve('@koishijs/utils'))
   mapDirectory('koishi/', __filename)
   Object.entries(config.setupFiles).forEach(([name, path]) => {
     const sourceMap = findSourceMap(path)
