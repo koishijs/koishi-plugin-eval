@@ -75,7 +75,7 @@ export function formatError(error: Error) {
 export const main = wrap<MainHandle>(parentPort)
 
 export interface SessionData {
-  id: string
+  id: number
   user: Partial<User>
   channel: Partial<Channel>
   userWritable: User.Field[]

@@ -140,34 +140,34 @@ export namespace Trap {
 export class MainHandle {
   constructor(public ctx: Context) {}
 
-  private getSession(uuid: string) {
+  private getSession(uuid: number) {
     const session = this.ctx.$processor._sessions[uuid]
     if (!session) throw new Error(`session ${uuid} not found`)
     return session
   }
 
-  async execute(uuid: string, message: string) {
+  async execute(uuid: number, message: string) {
     const session = this.getSession(uuid)
     const send = session.send
     const sendQueued = session.sendQueued
     const result = await session.execute(message, true)
     session.sendQueued = sendQueued
     session.send = send
-    return result
+    return result.join('')
   }
 
-  async send(uuid: string, content: string) {
+  async send(uuid: number, content: string) {
     const session = this.getSession(uuid)
     content = await this.ctx.waterfall('eval/before-send', content, session)
     if (content) return await session.sendQueued(content)
   }
 
-  async updateUser(uuid: string, data: Partial<User>) {
+  async updateUser(uuid: number, data: Partial<User>) {
     const session = this.getSession(uuid)
     return Trap.user.set(session.user, data)
   }
 
-  async updateGroup(uuid: string, data: Partial<Channel>) {
+  async updateGroup(uuid: number, data: Partial<Channel>) {
     const session = this.getSession(uuid)
     return Trap.channel.set(session.channel, data)
   }
