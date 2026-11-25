@@ -69,7 +69,6 @@ export function apply(ctx: Context, config: Config = {}) {
 
   const worker = new EvalWorker(ctx, config)
   ctx.worker = worker
-  // koishi v4.15+ 移除了 Context.service 静态方法，改用实例方法 provide 注册服务
   ctx.provide('worker', worker)
 
   // addons are registered in another plugin
@@ -145,8 +144,7 @@ export function apply(ctx: Context, config: Config = {}) {
   })
 
   if (prefix) {
-    // v4.18 的 fuzzy shortcut 走 i18n 字符串匹配，regex + args:['$1'] 形式不再支持位置参数替换；
-    // 且 session.stripped.content 已经过 h escape，`>` 会变成 `&gt;`，pattern 必须用 escape 后的形式。
+    // session.stripped.content is h-escaped (`>` becomes `&gt;`), so must the pattern be
     const escaped = segment.escape(prefix)
     const doubleEscaped = segment.escape(prefix + prefix[prefix.length - 1])
     command.shortcut(escaped, { fuzzy: true })

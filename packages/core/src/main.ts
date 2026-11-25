@@ -230,8 +230,7 @@ export class EvalWorker {
       }
     }
 
-    // vm.SourceTextModule / vm.SyntheticModule 需要 --experimental-vm-modules；
-    // spawn worker 时必须把父进程的 execArgv 传下去并确保该 flag 存在
+    // vm.SourceTextModule requires --experimental-vm-modules, which is not inherited by workers
     const execArgv = [...process.execArgv]
     if (!execArgv.includes('--experimental-vm-modules')) {
       execArgv.push('--experimental-vm-modules')
