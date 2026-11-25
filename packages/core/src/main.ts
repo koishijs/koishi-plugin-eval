@@ -231,7 +231,9 @@ export class EvalWorker {
     }
 
     // vm.SourceTextModule requires --experimental-vm-modules, which is not inherited by workers
-    const execArgv = [...process.execArgv]
+    // Node >= 20 rejects some main-process flags in worker_threads; strip them
+    const workerInvalidFlags = ['--async-stack-traces', '--expose-gc']
+    const execArgv = process.execArgv.filter(arg => !workerInvalidFlags.includes(arg) && !arg.startsWith('--inspect'))
     if (!execArgv.includes('--experimental-vm-modules')) {
       execArgv.push('--experimental-vm-modules')
     }
