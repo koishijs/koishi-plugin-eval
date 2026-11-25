@@ -62,14 +62,15 @@ const defaultConfig: EvalConfig = {
 
 const logger = new Logger('eval')
 
-Context.service('worker')
-
 export const name = 'eval'
 
 export function apply(ctx: Context, config: Config = {}) {
   const { prefix, authority } = config = { ...defaultConfig, ...config }
 
-  ctx.worker = new EvalWorker(ctx, config)
+  const worker = new EvalWorker(ctx, config)
+  ctx.worker = worker
+  // koishi v4.15+ 移除了 Context.service 静态方法，改用实例方法 provide 注册服务
+  ctx.provide('worker', worker)
 
   // addons are registered in another plugin
   if (config.root) ctx.plugin(addon, config)
@@ -144,8 +145,12 @@ export function apply(ctx: Context, config: Config = {}) {
   })
 
   if (prefix) {
-    command.shortcut(new RegExp(`^${escapeRegExp(prefix)} (.+)$`), { args: ['$1'] })
-    command.shortcut(new RegExp(`^${escapeRegExp(prefix + prefix[prefix.length - 1])} (.+)$`), { args: ['$1'], options: { slient: true } })
+    // v4.18 的 fuzzy shortcut 走 i18n 字符串匹配，regex + args:['$1'] 形式不再支持位置参数替换；
+    // 且 session.stripped.content 已经过 h escape，`>` 会变成 `&gt;`，pattern 必须用 escape 后的形式。
+    const escaped = segment.escape(prefix)
+    const doubleEscaped = segment.escape(prefix + prefix[prefix.length - 1])
+    command.shortcut(escaped, { fuzzy: true })
+    command.shortcut(doubleEscaped, { fuzzy: true, options: { slient: true } })
   }
 
   Argv.interpolate('${', '}', (raw) => {

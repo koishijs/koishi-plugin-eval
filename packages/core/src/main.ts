@@ -124,14 +124,14 @@ export namespace Trap {
       const user = Trap.user.get(argv.session.user, userAccess.readable)
       const channel = Trap.channel.get(argv.session.channel, channelAccess.readable)
       const payload = { id, user, channel, userWritable, channelWritable }
-      const inactive = !app.$internal._sessions[id]
-      app.$internal._sessions[id] = argv.session
+      const inactive = !app.$processor._sessions[id]
+      app.$processor._sessions[id] = argv.session
       try {
         const prev = await argv.next()
         if (prev) return prev
         return await action({ ...argv, payload }, ...args)
       } finally {
-        if (inactive) delete app.$internal._sessions[id]
+        if (inactive) delete app.$processor._sessions[id]
       }
     }, true)
   }
@@ -141,7 +141,7 @@ export class MainHandle {
   constructor(public ctx: Context) {}
 
   private getSession(uuid: string) {
-    const session = this.ctx.$internal._sessions[uuid]
+    const session = this.ctx.$processor._sessions[uuid]
     if (!session) throw new Error(`session ${uuid} not found`)
     return session
   }
@@ -230,8 +230,16 @@ export class EvalWorker {
       }
     }
 
+    // vm.SourceTextModule / vm.SyntheticModule 需要 --experimental-vm-modules；
+    // spawn worker 时必须把父进程的 execArgv 传下去并确保该 flag 存在
+    const execArgv = [...process.execArgv]
+    if (!execArgv.includes('--experimental-vm-modules')) {
+      execArgv.push('--experimental-vm-modules')
+    }
+
     this.worker = new Worker(workerScript, {
       eval: true,
+      execArgv,
       workerData: {
         logLevels: Logger.levels,
         logTime: Logger.targets[0].showTime,
