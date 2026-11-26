@@ -75,7 +75,7 @@ export function formatError(error: Error) {
 export const main = wrap<MainHandle>(parentPort)
 
 export interface SessionData {
-  id: string
+  id: number
   user: Partial<User>
   channel: Partial<Channel>
   userWritable: User.Field[]
@@ -232,7 +232,6 @@ async function start() {
   }
 
   response.commands = Object.keys(commandMap)
-  mapDirectory('koishi/utils/', require.resolve('@koishijs/utils'))
   mapDirectory('koishi/', __filename)
   Object.entries(config.setupFiles).forEach(([name, path]) => {
     const sourceMap = findSourceMap(path)

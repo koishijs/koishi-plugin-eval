@@ -6,7 +6,7 @@ import { readFileSync } from 'fs'
 import { createContext, Script, ScriptOptions } from 'vm'
 import { INSPECT_MAX_BYTES } from 'buffer'
 import { inspect } from 'util'
-import Logger from 'reggol'
+import { Logger } from 'koishi'
 import * as Internal from './internal'
 
 export interface VMOptions {

@@ -680,5 +680,8 @@ delete global.console
 global['Proxy'][host.inspect.custom] = () => '[Function: Proxy]'
 
 for (const key of Object.getOwnPropertyNames(global)) {
-  Object.defineProperty(GLOBAL, key, { value: global[key] })
+  // global/GLOBAL are already defined non-configurable above
+  const existing = Object.getOwnPropertyDescriptor(GLOBAL, key)
+  if (existing && !existing.configurable) continue
+  Object.defineProperty(GLOBAL, key, { value: global[key], configurable: true, writable: true })
 }

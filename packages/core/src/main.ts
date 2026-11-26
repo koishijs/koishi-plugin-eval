@@ -124,14 +124,14 @@ export namespace Trap {
       const user = Trap.user.get(argv.session.user, userAccess.readable)
       const channel = Trap.channel.get(argv.session.channel, channelAccess.readable)
       const payload = { id, user, channel, userWritable, channelWritable }
-      const inactive = !app.$internal._sessions[id]
-      app.$internal._sessions[id] = argv.session
+      const inactive = !app.$processor._sessions[id]
+      app.$processor._sessions[id] = argv.session
       try {
         const prev = await argv.next()
         if (prev) return prev
         return await action({ ...argv, payload }, ...args)
       } finally {
-        if (inactive) delete app.$internal._sessions[id]
+        if (inactive) delete app.$processor._sessions[id]
       }
     }, true)
   }
@@ -140,34 +140,34 @@ export namespace Trap {
 export class MainHandle {
   constructor(public ctx: Context) {}
 
-  private getSession(uuid: string) {
-    const session = this.ctx.$internal._sessions[uuid]
+  private getSession(uuid: number) {
+    const session = this.ctx.$processor._sessions[uuid]
     if (!session) throw new Error(`session ${uuid} not found`)
     return session
   }
 
-  async execute(uuid: string, message: string) {
+  async execute(uuid: number, message: string) {
     const session = this.getSession(uuid)
     const send = session.send
     const sendQueued = session.sendQueued
     const result = await session.execute(message, true)
     session.sendQueued = sendQueued
     session.send = send
-    return result
+    return result.join('')
   }
 
-  async send(uuid: string, content: string) {
+  async send(uuid: number, content: string) {
     const session = this.getSession(uuid)
     content = await this.ctx.waterfall('eval/before-send', content, session)
     if (content) return await session.sendQueued(content)
   }
 
-  async updateUser(uuid: string, data: Partial<User>) {
+  async updateUser(uuid: number, data: Partial<User>) {
     const session = this.getSession(uuid)
     return Trap.user.set(session.user, data)
   }
 
-  async updateGroup(uuid: string, data: Partial<Channel>) {
+  async updateGroup(uuid: number, data: Partial<Channel>) {
     const session = this.getSession(uuid)
     return Trap.channel.set(session.channel, data)
   }
@@ -230,8 +230,17 @@ export class EvalWorker {
       }
     }
 
+    // vm.SourceTextModule requires --experimental-vm-modules, which is not inherited by workers
+    // Node >= 20 rejects some main-process flags in worker_threads; strip them
+    const workerInvalidFlags = ['--async-stack-traces', '--expose-gc']
+    const execArgv = process.execArgv.filter(arg => !workerInvalidFlags.includes(arg) && !arg.startsWith('--inspect'))
+    if (!execArgv.includes('--experimental-vm-modules')) {
+      execArgv.push('--experimental-vm-modules')
+    }
+
     this.worker = new Worker(workerScript, {
       eval: true,
+      execArgv,
       workerData: {
         logLevels: Logger.levels,
         logTime: Logger.targets[0].showTime,

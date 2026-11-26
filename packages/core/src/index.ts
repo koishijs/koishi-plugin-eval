@@ -62,14 +62,14 @@ const defaultConfig: EvalConfig = {
 
 const logger = new Logger('eval')
 
-Context.service('worker')
-
 export const name = 'eval'
 
 export function apply(ctx: Context, config: Config = {}) {
   const { prefix, authority } = config = { ...defaultConfig, ...config }
 
-  ctx.worker = new EvalWorker(ctx, config)
+  const worker = new EvalWorker(ctx, config)
+  ctx.worker = worker
+  ctx.provide('worker', worker)
 
   // addons are registered in another plugin
   if (config.root) ctx.plugin(addon, config)
@@ -144,8 +144,11 @@ export function apply(ctx: Context, config: Config = {}) {
   })
 
   if (prefix) {
-    command.shortcut(new RegExp(`^${escapeRegExp(prefix)} (.+)$`), { args: ['$1'] })
-    command.shortcut(new RegExp(`^${escapeRegExp(prefix + prefix[prefix.length - 1])} (.+)$`), { args: ['$1'], options: { slient: true } })
+    // session.stripped.content is h-escaped (`>` becomes `&gt;`), so must the pattern be
+    const escaped = segment.escape(prefix)
+    const doubleEscaped = segment.escape(prefix + prefix[prefix.length - 1])
+    command.shortcut(escaped, { fuzzy: true })
+    command.shortcut(doubleEscaped, { fuzzy: true, options: { slient: true } })
   }
 
   Argv.interpolate('${', '}', (raw) => {
